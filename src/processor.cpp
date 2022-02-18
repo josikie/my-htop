@@ -6,7 +6,6 @@ float Processor::Utilization() {
   //return LinuxParser::ActiveJiffies() / (LinuxParser::ActiveJiffies() + LinuxParser::IdleJiffies());
   float activeJiffies;
   float idleJiffies;
-  float jiffies;
   std::ifstream stream(LinuxParser::kProcDirectory + LinuxParser::kStatFilename);
   if(stream.is_open()){
     std::getline(stream, line);
@@ -17,6 +16,6 @@ float Processor::Utilization() {
   activeJiffies = user + nice + system + irq + sortirq + steal;
   idleJiffies = idle + iowait;
 
-  jiffies = activeJiffies + idleJiffies;
+  //float jiffies = activeJiffies + idleJiffies;
   return activeJiffies/idleJiffies;
 }
