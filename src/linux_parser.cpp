@@ -112,54 +112,10 @@ long LinuxParser::Jiffies() { return 0;}
 long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
 
 // TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { 
-  long activeJiffies;
-  
-  long user;
-  long nice;
-  long system;
-  long idle;
-  long iowait;
-  long irq;
-  long sortirq;
-  long steal;
-  
-  string line;
-  string cpu;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-  if(stream.is_open()){
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> cpu >> user >> nice >> system >> idle >> iowait >> irq >> sortirq >> steal;
-  }
-  
-  activeJiffies = user + nice + system + irq + sortirq + steal;
-  return activeJiffies;
-}
+long LinuxParser::ActiveJiffies() { return 0;}
 
 // TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { 
-  long idleJiffies;
-  
-  long user;
-  long nice;
-  long system;
-  long idle;
-  long iowait;
-  
-  string line;
-  string cpu;
-  
-  std::ifstream stream(kProcDirectory + kStatFilename);
-  if(stream.is_open()){
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> cpu >> user >> nice >> system >> idle >> iowait;
-  }
-  
-  idleJiffies = idle + iowait;
-  return idleJiffies;
-}
+long LinuxParser::IdleJiffies() { return 0;}
 
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { return {}; }
@@ -230,7 +186,7 @@ string LinuxParser::Ram(int pid) {
       }
     }
   }
-  ram /= 0.001;
+  ram /= 1000;
   return std::to_string(ram);
 }
 
@@ -281,17 +237,19 @@ string LinuxParser::User(int pid) {
 long LinuxParser::UpTime(int pid) {
   long uptime;
   float hertz = sysconf(_SC_CLK_TCK);
-  vector<string> number;
   string line;
+  int value, starttime;
   std::ifstream stream(kProcDirectory + std::to_string(pid) + kStatFilename);
   if(stream.is_open()){
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> number[0] >> number[1] >> number[2] >> number[3] >> number[4] >> number[5] 
-    >> number[6] >> number[7] >> number[8] >> number[9] >> number[10] >> number[11] >> number[12]
-    >> number[13] >> number[14] >> number[15] >> number[16] >> number[17] >> number[18] >> number[19]
-    >> number[20] >> number[21];
-    uptime = stoi(number[21]) / hertz;
+    for(int i = 1; i <= 22; i++){
+      linestream >> value;
+      if(i == 22){
+        starttime = value;
+      }
+    }
+    uptime =  starttime / hertz;
   }
 
   return uptime;
