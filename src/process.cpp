@@ -45,14 +45,23 @@ float Process::CpuUtilization() const{
     total_time = utime + stime;
     total_time = total_time + cutime + cstime;
     seconds = uptime - starttime / hertz;
-    cpu_usage = 100 * ((total_time / hertz) / seconds);
+    cpu_usage = total_time / hertz / seconds;
   }
   return cpu_usage;
 }
 
 // TODO: Return the command that generated this process
 string Process::Command() { 
-  return LinuxParser::Command(pid_);
+  string command = LinuxParser::Command(pid_);
+  string cmd = "";
+  if(command.size() > 40){
+    for(int i = 0; i <= 40; i++){
+      cmd = cmd + command[i];
+    }
+    cmd = cmd + "...";
+    return cmd;
+  }
+  return command;
 }
 
 // TODO: Return this process's memory utilization
@@ -67,7 +76,7 @@ string Process::User() {
 
 // TODO: Return the age of this process (in seconds)
 long int Process::UpTime() { 
-  return LinuxParser::UpTime(pid_);
+  return LinuxParser::UpTime() - LinuxParser::UpTime(pid_);
 }
 
 // TODO: Overload the "less than" comparison operator for Process objects

@@ -18,6 +18,15 @@ const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 
+// Key
+const std::string filterPrettyName("PRETTY_NAME");
+const std::string filterMemFree("MemFree:");
+const std::string filterMemTotal("MemTotal:");
+const std::string filterProcesses("processes");
+const std::string filterProcsRunning("procs_running");
+const std::string filterVmRSS("VmRSS:");
+const std::string filterUid("Uid:");
+
 // System
 float MemoryUtilization();
 long UpTime();
